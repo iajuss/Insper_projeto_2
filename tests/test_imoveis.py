@@ -74,3 +74,13 @@ def test_lista_imovel_pelo_id(client):
 
     assert campos_esperados <= imovel.keys()
     assert imovel["id"] == imovel_id
+def test_listar_imoveis_informa_link_para_a_propria_colecao(client):
+    resposta = client.get("/imoveis")
+
+    dados = resposta.get_json()
+
+    assert "_links" in dados
+    assert dados["_links"]["self"] == {
+        "href": "/imoveis",
+        "method": "GET",
+    }
