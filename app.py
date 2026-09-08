@@ -63,9 +63,9 @@ def listar_imoveis():
 @app.get("/imoveis/<int:imovel_id>")
 def listar_imovel_pelo_id(imovel_id):
     conexao = criar_conexao()
-    cursor = conexao.cursor()
+    cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute('SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = ?', (imovel_id,))
+    cursor.execute('SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s', (imovel_id,))
 
     imovel = cursor.fetchone()
 
