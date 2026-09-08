@@ -58,3 +58,21 @@ def listar_imoveis():
         conexao.close()
 
     return jsonify({"imoveis": imoveis}), 200
+
+
+@app.get("/imoveis/<int:imovel_id>")
+def listar_imovel_pelo_id(imovel_id):
+    conexao = criar_conexao()
+    cursor = conexao.cursor()
+
+    cursor.execute('SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = ?', (imovel_id,))
+
+    imovel = cursor.fetchone()
+
+    if imovel is None:
+        return jsonify({"erro": "Imovel nao encontrado"}), 404
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({'imovel':imovel}), 200
