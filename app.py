@@ -2,7 +2,7 @@ import os
 
 import mysql.connector
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 
 load_dotenv()
@@ -76,3 +76,21 @@ def listar_imovel_pelo_id(imovel_id):
     conexao.close()
 
     return jsonify({'imovel':imovel}), 200
+
+@app.route("/imoveis", methods=['POST'])
+def cria_novo_imovel():
+    imovel = request.get_json()
+
+    conexao = criar_conexao()
+    cursor = conexao.cursor()
+
+    cursor.execute("INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (imovel['logradouro'], imovel['tipo_logradouro'], imovel['bairro'], imovel['cidade'], imovel['cep'], imovel['tipo'], imovel['valor'], imovel['data_aquisicao']))
+
+    conexao.commit()
+
+    imovel['id'] = cursor.lastrowid
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({'imovel': imovel}), 201
