@@ -85,3 +85,39 @@ def test_lista_imovel_pelo_id(client):
 
     assert campos_esperados <= imovel.keys()
     assert imovel["id"] == imovel_id
+
+def test_criar_novo_imovel(client):
+    novo_imovel = {
+        "logradouro": "Rua das Flores",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01234-567",
+        "tipo": "Apartamento",
+        "valor": 500000.00,
+        "data_aquisicao": "2024-05-10",
+    }
+
+    resposta = client.post("/imoveis", json=novo_imovel)
+
+    assert resposta.status_code == 201
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert isinstance(dados, dict)
+    assert "imovel" in dados
+
+    imovel = dados["imovel"]
+
+    assert "id" in imovel
+    assert imovel["id"] is not None
+
+    assert imovel["logradouro"] == novo_imovel["logradouro"]
+    assert imovel["tipo_logradouro"] == novo_imovel["tipo_logradouro"]
+    assert imovel["bairro"] == novo_imovel["bairro"]
+    assert imovel["cidade"] == novo_imovel["cidade"]
+    assert imovel["cep"] == novo_imovel["cep"]
+    assert imovel["tipo"] == novo_imovel["tipo"]
+    assert imovel["valor"] == novo_imovel["valor"]
+    assert imovel["data_aquisicao"] == novo_imovel["data_aquisicao"]
