@@ -86,7 +86,15 @@ def listar_imovel_pelo_id(imovel_id):
     cursor.close()
     conexao.close()
 
-    return jsonify({'imovel':imovel}), 200
+    return jsonify({
+    "imovel": imovel,
+    "_links": {
+        "self": {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "GET",
+        },
+    },
+    }), 200
 
 @app.route("/imoveis", methods=['POST'])
 def cria_novo_imovel():
