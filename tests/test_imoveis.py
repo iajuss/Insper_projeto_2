@@ -186,3 +186,16 @@ def test_listar_imovel_por_id_informa_link_para_si_mesmo(client):
         "href": f"/imoveis/{imovel_id}",
         "method": "GET",
     }
+
+def test_listar_imovel_por_id_informa_link_para_a_colecao(client):
+    resposta_lista = client.get("/imoveis")
+    imovel_id = resposta_lista.get_json()["imoveis"][0]["id"]
+
+    resposta = client.get(f"/imoveis/{imovel_id}")
+    dados = resposta.get_json()
+
+    assert "collection" in dados["_links"]
+    assert dados["_links"]["collection"] == {
+        "href": "/imoveis",
+        "method": "GET",
+    }
