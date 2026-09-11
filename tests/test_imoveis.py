@@ -162,3 +162,14 @@ def test_atualiza_funcao(client):
     assert imovel["tipo"] == imovel_atualizado["tipo"]
     assert imovel["valor"] == imovel_atualizado["valor"]
     assert imovel["data_aquisicao"] == imovel_atualizado["data_aquisicao"]
+
+def test_listar_imoveis_informa_como_criar_um_imovel(client):
+    resposta = client.get("/imoveis")
+
+    dados = resposta.get_json()
+
+    assert "create" in dados["_links"]
+    assert dados["_links"]["create"] == {
+        "href": "/imoveis",
+        "method": "POST",
+    }
