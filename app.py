@@ -93,6 +93,10 @@ def listar_imovel_pelo_id(imovel_id):
             "href": f"/imoveis/{imovel_id}",
             "method": "GET",
         },
+        "collection": {
+        "href": "/imoveis",
+        "method": "GET",
+    },
     },
     }), 200
 
