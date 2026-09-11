@@ -57,7 +57,15 @@ def listar_imoveis():
         cursor.close()
         conexao.close()
 
-    return jsonify({"imoveis": imoveis}), 200
+    return jsonify({
+    "imoveis": imoveis,
+    "_links": {
+        "self": {
+            "href": "/imoveis",
+            "method": "GET",
+        },
+    },
+    }), 200
 
 
 @app.get("/imoveis/<int:imovel_id>")
