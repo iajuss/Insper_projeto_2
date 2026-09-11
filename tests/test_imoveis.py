@@ -199,3 +199,26 @@ def test_listar_imovel_por_id_informa_link_para_a_colecao(client):
         "href": "/imoveis",
         "method": "GET",
     }
+
+def test_remover_imovel(client):
+    novo_imovel = {
+        "logradouro": "Rua do Teste de Remocao",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 300000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta_criacao = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta_criacao.get_json()["imovel"]["id"]
+
+    resposta_remocao = client.delete(f"/imoveis/{imovel_id}")
+
+    assert resposta_remocao.status_code == 204
+    assert resposta_remocao.data == b""
+
+    resposta_consulta = client.get(f"/imoveis/{imovel_id}")
+    assert resposta_consulta.status_code == 404
