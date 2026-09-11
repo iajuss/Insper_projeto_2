@@ -173,3 +173,16 @@ def test_listar_imoveis_informa_como_criar_um_imovel(client):
         "href": "/imoveis",
         "method": "POST",
     }
+
+def test_listar_imovel_por_id_informa_link_para_si_mesmo(client):
+    resposta_lista = client.get("/imoveis")
+    imovel_id = resposta_lista.get_json()["imoveis"][0]["id"]
+
+    resposta = client.get(f"/imoveis/{imovel_id}")
+    dados = resposta.get_json()
+
+    assert "_links" in dados
+    assert dados["_links"]["self"] == {
+        "href": f"/imoveis/{imovel_id}",
+        "method": "GET",
+    }
