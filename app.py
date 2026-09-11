@@ -60,11 +60,14 @@ def listar_imoveis():
     return jsonify({
     "imoveis": imoveis,
     "_links": {
-        "self": {
-            "href": "/imoveis",
-            "method": "GET",
-        },
+    "self": {
+        "href": "/imoveis",
+        "method": "GET",
     },
+    "create": {
+        "href": "/imoveis",
+        "method": "POST",
+    },},
     }), 200
 
 
