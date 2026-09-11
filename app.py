@@ -94,3 +94,21 @@ def cria_novo_imovel():
     conexao.close()
 
     return jsonify({'imovel': imovel}), 201
+
+@app.route('/imoveis/<int:id>', methods=['PUT'])
+def atualiza_imovel(id):
+    imovel = request.get_json()
+
+    conexao = criar_conexao()
+    cursor = conexao.cursor()
+
+    cursor.execute('UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s', (imovel['logradouro'], imovel['tipo_logradouro'], imovel['bairro'], imovel['cidade'], imovel['cep'], imovel['tipo'], imovel['valor'], imovel['data_aquisicao'], id))
+
+    conexao.commit()
+
+    imovel['id'] = id
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({'imovel': imovel}), 200
