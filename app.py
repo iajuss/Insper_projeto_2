@@ -33,12 +33,13 @@ def criar_conexao():
 
 @app.get("/imoveis")
 def listar_imoveis():
+    tipo = request.args.get("tipo")
+
     conexao = criar_conexao()
     cursor = conexao.cursor(dictionary=True)
 
     try:
-        cursor.execute(
-            """
+        consulta = """
             SELECT
                 id,
                 logradouro,
@@ -50,24 +51,32 @@ def listar_imoveis():
                 valor,
                 data_aquisicao
             FROM imoveis
-            """
-        )
+        """
+
+        parametros = ()
+
+        if tipo is not None:
+            consulta += " WHERE tipo = %s"
+            parametros = (tipo,)
+
+        cursor.execute(consulta, parametros)
         imoveis = cursor.fetchall()
     finally:
         cursor.close()
         conexao.close()
 
     return jsonify({
-    "imoveis": imoveis,
-    "_links": {
-    "self": {
-        "href": "/imoveis",
-        "method": "GET",
-    },
-    "create": {
-        "href": "/imoveis",
-        "method": "POST",
-    },},
+        "imoveis": imoveis,
+        "_links": {
+            "self": {
+                "href": "/imoveis",
+                "method": "GET",
+            },
+            "create": {
+                "href": "/imoveis",
+                "method": "POST",
+            },
+        },
     }), 200
 
 

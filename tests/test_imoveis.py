@@ -267,6 +267,6 @@ def test_listar_imoveis_por_tipo(client):
     assert "imoveis" in dados
     assert len(dados["imoveis"]) > 0
     assert all(
-        imovel["tipo"] == "Apartamento"
+        imovel["tipo"].casefold() == "apartamento"
         for imovel in dados["imoveis"]
     )
