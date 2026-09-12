@@ -96,8 +96,12 @@ def listar_imovel_pelo_id(imovel_id):
         "collection": {
         "href": "/imoveis",
         "method": "GET",
-    },
-    },
+        },
+        "delete": {
+        "href": f"/imoveis/{imovel_id}",
+        "method": "DELETE",
+        },
+                },
     }), 200
 
 @app.route("/imoveis", methods=['POST'])
