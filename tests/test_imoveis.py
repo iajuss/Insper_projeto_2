@@ -231,3 +231,15 @@ def test_remover_imovel_inexistente_retorna_404(client):
     assert resposta.get_json() == {
         "erro": "Imovel nao encontrado",
     }
+
+def test_listar_imovel_por_id_informa_como_remover(client):
+    resposta_lista = client.get("/imoveis")
+    imovel_id = resposta_lista.get_json()["imoveis"][0]["id"]
+
+    resposta = client.get(f"/imoveis/{imovel_id}")
+    dados = resposta.get_json()
+
+    assert dados["_links"]["delete"] == {
+        "href": f"/imoveis/{imovel_id}",
+        "method": "DELETE",
+    }
