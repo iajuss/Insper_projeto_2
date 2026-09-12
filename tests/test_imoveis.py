@@ -270,3 +270,24 @@ def test_listar_imoveis_por_tipo(client):
         imovel["tipo"].casefold() == "apartamento"
         for imovel in dados["imoveis"]
     )
+
+def test_listar_imoveis_por_cidade(client):
+    resposta_todos = client.get("/imoveis")
+    cidade = resposta_todos.get_json()["imoveis"][0]["cidade"]
+
+    resposta = client.get(
+        "/imoveis",
+        query_string={"cidade": cidade},
+    )
+
+    assert resposta.status_code == 200
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert "imoveis" in dados
+    assert len(dados["imoveis"]) > 0
+    assert all(
+        imovel["cidade"].casefold() == cidade.casefold()
+        for imovel in dados["imoveis"]
+    )
