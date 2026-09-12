@@ -255,3 +255,18 @@ def test_listar_imovel_por_id_informa_como_atualizar(client):
         "href": f"/imoveis/{imovel_id}",
         "method": "PUT",
     }
+
+def test_listar_imoveis_por_tipo(client):
+    resposta = client.get("/imoveis?tipo=Apartamento")
+
+    assert resposta.status_code == 200
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert "imoveis" in dados
+    assert len(dados["imoveis"]) > 0
+    assert all(
+        imovel["tipo"] == "Apartamento"
+        for imovel in dados["imoveis"]
+    )
