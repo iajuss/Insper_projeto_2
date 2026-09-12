@@ -222,3 +222,12 @@ def test_remover_imovel(client):
 
     resposta_consulta = client.get(f"/imoveis/{imovel_id}")
     assert resposta_consulta.status_code == 404
+
+def test_remover_imovel_inexistente_retorna_404(client):
+    resposta = client.delete("/imoveis/0")
+
+    assert resposta.status_code == 404
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Imovel nao encontrado",
+    }
