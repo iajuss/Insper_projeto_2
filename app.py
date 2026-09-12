@@ -34,6 +34,7 @@ def criar_conexao():
 @app.get("/imoveis")
 def listar_imoveis():
     tipo = request.args.get("tipo")
+    cidade = request.args.get("cidade")
 
     conexao = criar_conexao()
     cursor = conexao.cursor(dictionary=True)
@@ -53,13 +54,21 @@ def listar_imoveis():
             FROM imoveis
         """
 
-        parametros = ()
+        condicoes = []
+        parametros = []
 
         if tipo is not None:
-            consulta += " WHERE tipo = %s"
-            parametros = (tipo,)
+            condicoes.append("tipo = %s")
+            parametros.append(tipo)
 
-        cursor.execute(consulta, parametros)
+        if cidade is not None:
+            condicoes.append("cidade = %s")
+            parametros.append(cidade)
+
+        if condicoes:
+            consulta += " WHERE " + " AND ".join(condicoes)
+
+        cursor.execute(consulta, tuple(parametros))
         imoveis = cursor.fetchall()
     finally:
         cursor.close()
@@ -78,7 +87,6 @@ def listar_imoveis():
             },
         },
     }), 200
-
 
 @app.get("/imoveis/<int:imovel_id>")
 def listar_imovel_pelo_id(imovel_id):
