@@ -180,3 +180,39 @@ def remover_imovel(imovel_id):
     finally:
         cursor.close()
         conexao.close()
+
+@app.get("/imoveis/tipo/<tipo>")
+def buscar_imoveis_por_tipo(tipo):
+    conexao = criar_conexao()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+        cursor.execute(
+            "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE tipo = %s",
+            (tipo,)
+        )
+
+        imoveis = cursor.fetchall()
+    finally:
+        cursor.close()
+        conexao.close()
+
+    return jsonify({"imoveis": imoveis}), 200
+
+@app.get("/imoveis/cidade/<cidade>")
+def buscar_imoveis_por_cidade(cidade):
+    conexao = criar_conexao()
+    cursor = conexao.cursor(dictionary=True)
+
+    try:
+        cursor.execute(
+            "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE cidade = %s",
+            (cidade,)
+        )
+
+        imoveis = cursor.fetchall()
+    finally:
+        cursor.close()
+        conexao.close()
+
+    return jsonify({"imoveis": imoveis}), 200
