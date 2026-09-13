@@ -503,3 +503,16 @@ def test_atualizar_imovel_informa_link_para_si_mesmo(client):
     }
     finally:
         client.delete(f"/imoveis/{imovel_id}")
+
+def test_criar_imovel_sem_json_retorna_400(client):
+    resposta = client.post(
+        "/imoveis",
+        data="isto nao e JSON",
+        content_type="text/plain",
+    )
+
+    assert resposta.status_code == 400
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Dados do imovel invalidos",
+    }
