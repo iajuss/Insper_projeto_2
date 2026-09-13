@@ -395,3 +395,26 @@ def test_criar_imovel_sem_campo_obrigatorio_retorna_400(client):
     assert resposta.get_json() == {
         "erro": "Dados do imovel invalidos",
     }
+
+def test_atualizar_imovel_sem_campo_obrigatorio_retorna_400(client):
+    resposta_lista = client.get("/imoveis")
+    imovel_id = resposta_lista.get_json()["imoveis"][0]["id"]
+
+    imovel_incompleto = {
+        "logradouro": "Rua Incompleta",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        # cidade está ausente de propósito
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.put(f"/imoveis/{imovel_id}", json=imovel_incompleto)
+
+    assert resposta.status_code == 400
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Dados do imovel invalidos",
+    }
