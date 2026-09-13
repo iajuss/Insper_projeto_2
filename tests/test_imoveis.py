@@ -516,3 +516,19 @@ def test_criar_imovel_sem_json_retorna_400(client):
     assert resposta.get_json() == {
         "erro": "Dados do imovel invalidos",
     }
+
+def test_atualizar_imovel_sem_json_retorna_400(client):
+    resposta_lista = client.get("/imoveis")
+    imovel_id = resposta_lista.get_json()["imoveis"][0]["id"]
+
+    resposta = client.put(
+        f"/imoveis/{imovel_id}",
+        data="isto nao e JSON",
+        content_type="text/plain",
+    )
+
+    assert resposta.status_code == 400
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Dados do imovel invalidos",
+    }
