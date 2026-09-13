@@ -157,7 +157,15 @@ def cria_novo_imovel():
     cursor.close()
     conexao.close()
 
-    return jsonify({'imovel': imovel}), 201
+    return jsonify({
+    "imovel": imovel,
+    "_links": {
+        "self": {
+            "href": f"/imoveis/{imovel['id']}",
+            "method": "GET",
+        },
+    },
+    }), 201
 
 @app.route("/imoveis/<int:imovel_id>", methods=["PUT"])
 def atualiza_imovel(imovel_id):
