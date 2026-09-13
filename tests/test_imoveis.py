@@ -376,3 +376,22 @@ def test_atualizar_imovel_inexistente_retorna_404(client):
         "erro": "Imovel nao encontrado",
     }
 
+def test_criar_imovel_sem_campo_obrigatorio_retorna_400(client):
+    imovel_incompleto = {
+        "logradouro": "Rua Incompleta",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        # cidade está ausente de propósito
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.post("/imoveis", json=imovel_incompleto)
+
+    assert resposta.status_code == 400
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Dados do imovel invalidos",
+    }
