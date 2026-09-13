@@ -328,3 +328,30 @@ def test_buscar_imoveis_por_cidade_pela_rota(client):
         imovel["cidade"].casefold() == cidade.casefold()
         for imovel in dados["imoveis"]
     )
+
+def test_listar_imoveis_por_tipo_e_cidade(client):
+    resposta_todos = client.get("/imoveis")
+    imovel_base = resposta_todos.get_json()["imoveis"][0]
+
+    tipo = imovel_base["tipo"]
+    cidade = imovel_base["cidade"]
+
+    resposta = client.get(
+        "/imoveis",
+        query_string={
+            "tipo": tipo,
+            "cidade": cidade,
+        },
+    )
+
+    assert resposta.status_code == 200
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert len(dados["imoveis"]) > 0
+    assert all(
+        imovel["tipo"].casefold() == tipo.casefold()
+        and imovel["cidade"].casefold() == cidade.casefold()
+        for imovel in dados["imoveis"]
+    )
