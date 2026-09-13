@@ -233,7 +233,15 @@ def atualiza_imovel(imovel_id):
         conexao.commit()
 
         imovel["id"] = imovel_id
-        return jsonify({"imovel": imovel}), 200
+        return jsonify({
+    "imovel": imovel,
+    "_links": {
+        "self": {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "GET",
+        },
+        },
+        }), 200
     finally:
         cursor.close()
         conexao.close()
