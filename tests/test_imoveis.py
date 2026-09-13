@@ -542,3 +542,12 @@ def test_listar_imoveis_por_tipo_inexistente_retorna_lista_vazia(client):
     dados = resposta.get_json()
 
     assert dados["imoveis"] == []
+
+def test_listar_imovel_inexistente_retorna_404(client):
+    resposta = client.get("/imoveis/0")
+
+    assert resposta.status_code == 404
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Imovel nao encontrado",
+    }
