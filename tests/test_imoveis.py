@@ -532,3 +532,13 @@ def test_atualizar_imovel_sem_json_retorna_400(client):
     assert resposta.get_json() == {
         "erro": "Dados do imovel invalidos",
     }
+
+def test_listar_imoveis_por_tipo_inexistente_retorna_lista_vazia(client):
+    resposta = client.get("/imoveis?tipo=TipoQueNaoExiste")
+
+    assert resposta.status_code == 200
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert dados["imoveis"] == []
