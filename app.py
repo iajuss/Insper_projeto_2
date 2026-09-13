@@ -239,8 +239,12 @@ def atualiza_imovel(imovel_id):
         "self": {
             "href": f"/imoveis/{imovel_id}",
             "method": "GET",
-        },
-        },
+                },
+        "collection": {
+            "href": "/imoveis",
+            "method": "GET",
+                },
+            },
         }), 200
     finally:
         cursor.close()
