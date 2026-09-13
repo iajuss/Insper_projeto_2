@@ -101,37 +101,48 @@ def test_criar_novo_imovel(client):
     }
 
     resposta = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta.get_json()["imovel"]["id"]
 
-    assert resposta.status_code == 201
-    assert resposta.is_json
+    try:
+        assert resposta.status_code == 201
+        assert resposta.is_json
 
-    dados = resposta.get_json()
+        dados = resposta.get_json()
 
-    assert isinstance(dados, dict)
-    assert "imovel" in dados
+        assert isinstance(dados, dict)
+        assert "imovel" in dados
 
-    imovel = dados["imovel"]
+        imovel = dados["imovel"]
 
-    assert "id" in imovel
-    assert imovel["id"] is not None
+        assert "id" in imovel
+        assert imovel["id"] is not None
 
-    assert imovel["logradouro"] == novo_imovel["logradouro"]
-    assert imovel["tipo_logradouro"] == novo_imovel["tipo_logradouro"]
-    assert imovel["bairro"] == novo_imovel["bairro"]
-    assert imovel["cidade"] == novo_imovel["cidade"]
-    assert imovel["cep"] == novo_imovel["cep"]
-    assert imovel["tipo"] == novo_imovel["tipo"]
-    assert imovel["valor"] == novo_imovel["valor"]
-    assert imovel["data_aquisicao"] == novo_imovel["data_aquisicao"]
+        assert imovel["logradouro"] == novo_imovel["logradouro"]
+        assert imovel["tipo_logradouro"] == novo_imovel["tipo_logradouro"]
+        assert imovel["bairro"] == novo_imovel["bairro"]
+        assert imovel["cidade"] == novo_imovel["cidade"]
+        assert imovel["cep"] == novo_imovel["cep"]
+        assert imovel["tipo"] == novo_imovel["tipo"]
+        assert imovel["valor"] == novo_imovel["valor"]
+        assert imovel["data_aquisicao"] == novo_imovel["data_aquisicao"]
+   
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
 
 def test_atualiza_funcao(client):
+    imovel_original = {
+        "logradouro": "Rua Antes da Atualizacao",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
 
-    resposta_lista = client.get("/imoveis")
-
-    assert resposta_lista.status_code == 200
-
-    dados_lista = resposta_lista.get_json()
-    imovel_id = dados_lista["imoveis"][0]["id"]
+    resposta_criacao = client.post("/imoveis", json=imovel_original)
+    imovel_id = resposta_criacao.get_json()["imovel"]["id"]
 
     imovel_atualizado = {
         "logradouro": "Avenida Paulista",
@@ -144,27 +155,34 @@ def test_atualiza_funcao(client):
         "data_aquisicao": "2025-01-15",
     }
 
-    resposta = client.put(f"/imoveis/{imovel_id}", json=imovel_atualizado)
+    try:
+        resposta = client.put(
+            f"/imoveis/{imovel_id}",
+            json=imovel_atualizado,
+        )
 
-    assert resposta.status_code == 200
-    assert resposta.is_json
+        assert resposta.status_code == 200
+        assert resposta.is_json
 
-    dados = resposta.get_json()
+        dados = resposta.get_json()
 
-    assert "imovel" in dados
+        assert "imovel" in dados
 
-    imovel = dados["imovel"]
+        imovel = dados["imovel"]
 
-    assert imovel["id"] == imovel_id
-    assert imovel["logradouro"] == imovel_atualizado["logradouro"]
-    assert imovel["tipo_logradouro"] == imovel_atualizado["tipo_logradouro"]
-    assert imovel["bairro"] == imovel_atualizado["bairro"]
-    assert imovel["cidade"] == imovel_atualizado["cidade"]
-    assert imovel["cep"] == imovel_atualizado["cep"]
-    assert imovel["tipo"] == imovel_atualizado["tipo"]
-    assert imovel["valor"] == imovel_atualizado["valor"]
-    assert imovel["data_aquisicao"] == imovel_atualizado["data_aquisicao"]
+        assert imovel["id"] == imovel_id
+        assert imovel["logradouro"] == imovel_atualizado["logradouro"]
+        assert imovel["tipo_logradouro"] == imovel_atualizado["tipo_logradouro"]
+        assert imovel["bairro"] == imovel_atualizado["bairro"]
+        assert imovel["cidade"] == imovel_atualizado["cidade"]
+        assert imovel["cep"] == imovel_atualizado["cep"]
+        assert imovel["tipo"] == imovel_atualizado["tipo"]
+        assert imovel["valor"] == imovel_atualizado["valor"]
+        assert imovel["data_aquisicao"] == imovel_atualizado["data_aquisicao"]
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
 
+        
 def test_listar_imoveis_informa_como_criar_um_imovel(client):
     resposta = client.get("/imoveis")
 
