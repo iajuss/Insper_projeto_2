@@ -463,3 +463,39 @@ def test_criar_imovel_informa_location(client):
         assert resposta.headers["Location"] == f"/imoveis/{imovel_id}"
     finally:
         client.delete(f"/imoveis/{imovel_id}")
+
+def test_atualizar_imovel_informa_link_para_si_mesmo(client):
+    novo_imovel = {
+        "logradouro": "Rua Antes da Atualizacao",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta_criacao = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta_criacao.get_json()["imovel"]["id"]
+
+    imovel_atualizado = {
+        **novo_imovel,
+        "logradouro": "Rua Depois da Atualizacao",
+    }
+
+    try:
+        resposta = client.put(
+            f"/imoveis/{imovel_id}",
+            json=imovel_atualizado,
+        )
+
+        dados = resposta.get_json()
+
+        assert resposta.status_code == 200
+        assert dados["_links"]["self"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "GET",
+        }
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
