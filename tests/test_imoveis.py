@@ -442,3 +442,24 @@ def test_criar_imovel_informa_link_para_si_mesmo(client):
         }
     finally:
         client.delete(f"/imoveis/{imovel_id}")
+
+def test_criar_imovel_informa_location(client):
+    novo_imovel = {
+        "logradouro": "Rua do Location",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta.get_json()["imovel"]["id"]
+
+    try:
+        assert resposta.status_code == 201
+        assert resposta.headers["Location"] == f"/imoveis/{imovel_id}"
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
