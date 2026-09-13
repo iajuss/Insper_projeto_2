@@ -161,7 +161,23 @@ def cria_novo_imovel():
 
 @app.route("/imoveis/<int:imovel_id>", methods=["PUT"])
 def atualiza_imovel(imovel_id):
-    imovel = request.get_json()
+    imovel = request.get_json(silent=True)
+
+    campos_obrigatorios = {
+        "logradouro",
+        "tipo_logradouro",
+        "bairro",
+        "cidade",
+        "cep",
+        "tipo",
+        "valor",
+        "data_aquisicao",
+    }
+
+    if not isinstance(imovel, dict) or not campos_obrigatorios <= imovel.keys():
+        return jsonify({
+            "erro": "Dados do imovel invalidos",
+        }), 400
 
     conexao = criar_conexao()
     cursor = conexao.cursor()
