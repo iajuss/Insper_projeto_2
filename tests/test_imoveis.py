@@ -355,3 +355,24 @@ def test_listar_imoveis_por_tipo_e_cidade(client):
         and imovel["cidade"].casefold() == cidade.casefold()
         for imovel in dados["imoveis"]
     )
+
+def test_atualizar_imovel_inexistente_retorna_404(client):
+    imovel_atualizado = {
+        "logradouro": "Rua Inexistente",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.put("/imoveis/0", json=imovel_atualizado)
+
+    assert resposta.status_code == 404
+    assert resposta.is_json
+    assert resposta.get_json() == {
+        "erro": "Imovel nao encontrado",
+    }
+
