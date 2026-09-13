@@ -143,23 +143,56 @@ def cria_novo_imovel():
 
     return jsonify({'imovel': imovel}), 201
 
-@app.route('/imoveis/<int:id>', methods=['PUT'])
-def atualiza_imovel(id):
+@app.route("/imoveis/<int:imovel_id>", methods=["PUT"])
+def atualiza_imovel(imovel_id):
     imovel = request.get_json()
 
     conexao = criar_conexao()
     cursor = conexao.cursor()
 
-    cursor.execute('UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s', (imovel['logradouro'], imovel['tipo_logradouro'], imovel['bairro'], imovel['cidade'], imovel['cep'], imovel['tipo'], imovel['valor'], imovel['data_aquisicao'], id))
+    try:
+        cursor.execute(
+            "SELECT id FROM imoveis WHERE id = %s",
+            (imovel_id,),
+        )
 
-    conexao.commit()
+        if cursor.fetchone() is None:
+            return jsonify({"erro": "Imovel nao encontrado"}), 404
 
-    imovel['id'] = id
+        cursor.execute(
+            """
+            UPDATE imoveis
+            SET
+                logradouro = %s,
+                tipo_logradouro = %s,
+                bairro = %s,
+                cidade = %s,
+                cep = %s,
+                tipo = %s,
+                valor = %s,
+                data_aquisicao = %s
+            WHERE id = %s
+            """,
+            (
+                imovel["logradouro"],
+                imovel["tipo_logradouro"],
+                imovel["bairro"],
+                imovel["cidade"],
+                imovel["cep"],
+                imovel["tipo"],
+                imovel["valor"],
+                imovel["data_aquisicao"],
+                imovel_id,
+            ),
+        )
 
-    cursor.close()
-    conexao.close()
+        conexao.commit()
 
-    return jsonify({'imovel': imovel}), 200
+        imovel["id"] = imovel_id
+        return jsonify({"imovel": imovel}), 200
+    finally:
+        cursor.close()
+        conexao.close()
 
 @app.delete("/imoveis/<int:imovel_id>")
 def remover_imovel(imovel_id):
