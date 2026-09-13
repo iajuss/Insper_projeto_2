@@ -497,5 +497,9 @@ def test_atualizar_imovel_informa_link_para_si_mesmo(client):
             "href": f"/imoveis/{imovel_id}",
             "method": "GET",
         }
+        assert dados["_links"]["collection"] == {
+        "href": "/imoveis",
+        "method": "GET",
+    }
     finally:
         client.delete(f"/imoveis/{imovel_id}")
