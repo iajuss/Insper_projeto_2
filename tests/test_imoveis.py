@@ -418,3 +418,27 @@ def test_atualizar_imovel_sem_campo_obrigatorio_retorna_400(client):
     assert resposta.get_json() == {
         "erro": "Dados do imovel invalidos",
     }
+
+def test_criar_imovel_informa_link_para_si_mesmo(client):
+    novo_imovel = {
+        "logradouro": "Rua do Link de Criacao",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.post("/imoveis", json=novo_imovel)
+    dados = resposta.get_json()
+    imovel_id = dados["imovel"]["id"]
+
+    try:
+        assert dados["_links"]["self"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "GET",
+        }
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
