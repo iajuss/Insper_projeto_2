@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 import pytest
 
 from app import app
@@ -304,5 +306,25 @@ def test_buscar_imoveis_por_tipo_pela_rota(client):
     assert len(dados["imoveis"]) > 0
     assert all(
         imovel["tipo"].casefold() == "apartamento"
+        for imovel in dados["imoveis"]
+    )
+
+def test_buscar_imoveis_por_cidade_pela_rota(client):
+    resposta_todos = client.get("/imoveis")
+    cidade = resposta_todos.get_json()["imoveis"][0]["cidade"]
+
+    cidade_na_url = quote(cidade, safe="")
+
+    resposta = client.get(f"/imoveis/cidade/{cidade_na_url}")
+
+    assert resposta.status_code == 200
+    assert resposta.is_json
+
+    dados = resposta.get_json()
+
+    assert "imoveis" in dados
+    assert len(dados["imoveis"]) > 0
+    assert all(
+        imovel["cidade"].casefold() == cidade.casefold()
         for imovel in dados["imoveis"]
     )
