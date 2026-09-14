@@ -182,7 +182,7 @@ def test_atualiza_funcao(client):
     finally:
         client.delete(f"/imoveis/{imovel_id}")
 
-        
+
 def test_listar_imoveis_informa_como_criar_um_imovel(client):
     resposta = client.get("/imoveis")
 
@@ -568,4 +568,16 @@ def test_listar_imovel_inexistente_retorna_404(client):
     assert resposta.is_json
     assert resposta.get_json() == {
         "erro": "Imovel nao encontrado",
+    }
+
+def test_listar_imoveis_informa_link_para_cada_imovel(client):
+    resposta = client.get("/imoveis")
+    dados = resposta.get_json()
+
+    imovel = dados["imoveis"][0]
+    imovel_id = imovel["id"]
+
+    assert imovel["_links"]["self"] == {
+        "href": f"/imoveis/{imovel_id}",
+        "method": "GET",
     }
