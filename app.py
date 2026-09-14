@@ -74,6 +74,14 @@ def listar_imoveis():
         cursor.close()
         conexao.close()
 
+    for imovel in imoveis:
+        imovel["_links"] = {
+            "self": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "GET",
+            },
+        }
+
     return jsonify({
         "imoveis": imoveis,
         "_links": {
@@ -243,8 +251,8 @@ def atualiza_imovel(imovel_id):
         "collection": {
             "href": "/imoveis",
             "method": "GET",
-                },
             },
+        },
         }), 200
     finally:
         cursor.close()
