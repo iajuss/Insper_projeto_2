@@ -290,8 +290,21 @@ def buscar_imoveis_por_tipo(tipo):
 
     try:
         cursor.execute(
-            "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE tipo = %s",
-            (tipo,)
+            """
+            SELECT
+                id,
+                logradouro,
+                tipo_logradouro,
+                bairro,
+                cidade,
+                cep,
+                tipo,
+                valor,
+                data_aquisicao
+            FROM imoveis
+            WHERE tipo = %s
+            """,
+            (tipo,),
         )
 
         imoveis = cursor.fetchall()
@@ -299,7 +312,27 @@ def buscar_imoveis_por_tipo(tipo):
         cursor.close()
         conexao.close()
 
-    return jsonify({"imoveis": imoveis}), 200
+    for imovel in imoveis:
+        imovel["_links"] = {
+            "self": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "GET",
+            },
+        }
+
+    return jsonify({
+        "imoveis": imoveis,
+        "_links": {
+            "self": {
+                "href": f"/imoveis/tipo/{tipo}",
+                "method": "GET",
+            },
+            "collection": {
+                "href": "/imoveis",
+                "method": "GET",
+            },
+        },
+    }), 200
 
 @app.get("/imoveis/cidade/<cidade>")
 def buscar_imoveis_por_cidade(cidade):
