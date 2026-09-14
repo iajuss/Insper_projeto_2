@@ -689,3 +689,36 @@ def test_criar_imovel_informa_acoes_do_novo_recurso(client):
         }
     finally:
         client.delete(f"/imoveis/{imovel_id}")
+
+def test_atualizar_imovel_informa_acoes_do_recurso(client):
+    novo_imovel = {
+        "logradouro": "Rua da Atualizacao",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta_criacao = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta_criacao.get_json()["imovel"]["id"]
+
+    try:
+        resposta = client.put(
+            f"/imoveis/{imovel_id}",
+            json=novo_imovel,
+        )
+        dados = resposta.get_json()
+
+        assert dados["_links"]["update"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "PUT",
+        }
+        assert dados["_links"]["delete"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "DELETE",
+        }
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
