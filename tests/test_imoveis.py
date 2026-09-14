@@ -643,3 +643,16 @@ def test_buscar_imoveis_por_tipo_informa_como_criar_imovel(client):
         "href": "/imoveis",
         "method": "POST",
     }
+
+def test_buscar_imoveis_por_cidade_informa_como_criar_imovel(client):
+    resposta_todos = client.get("/imoveis")
+    cidade = resposta_todos.get_json()["imoveis"][0]["cidade"]
+    cidade_na_url = quote(cidade, safe="")
+
+    resposta = client.get(f"/imoveis/cidade/{cidade_na_url}")
+    dados = resposta.get_json()
+
+    assert dados["_links"]["create"] == {
+        "href": "/imoveis",
+        "method": "POST",
+    }
