@@ -1,4 +1,5 @@
 import os
+from urllib.parse import quote
 
 import mysql.connector
 from dotenv import load_dotenv
@@ -341,8 +342,21 @@ def buscar_imoveis_por_cidade(cidade):
 
     try:
         cursor.execute(
-            "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE cidade = %s",
-            (cidade,)
+            """
+            SELECT
+                id,
+                logradouro,
+                tipo_logradouro,
+                bairro,
+                cidade,
+                cep,
+                tipo,
+                valor,
+                data_aquisicao
+            FROM imoveis
+            WHERE cidade = %s
+            """,
+            (cidade,),
         )
 
         imoveis = cursor.fetchall()
@@ -350,4 +364,26 @@ def buscar_imoveis_por_cidade(cidade):
         cursor.close()
         conexao.close()
 
-    return jsonify({"imoveis": imoveis}), 200
+    for imovel in imoveis:
+        imovel["_links"] = {
+            "self": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "GET",
+            },
+        }
+
+    cidade_na_url = quote(cidade, safe="")
+
+    return jsonify({
+        "imoveis": imoveis,
+        "_links": {
+            "self": {
+                "href": f"/imoveis/cidade/{cidade_na_url}",
+                "method": "GET",
+            },
+            "collection": {
+                "href": "/imoveis",
+                "method": "GET",
+            },
+        },
+    }), 200
