@@ -590,3 +590,23 @@ def test_listar_imoveis_filtrados_informa_link_para_a_consulta(client):
         "href": "/imoveis?tipo=Apartamento",
         "method": "GET",
     }
+
+def test_buscar_imoveis_por_tipo_informa_links(client):
+    resposta = client.get("/imoveis/tipo/Apartamento")
+    dados = resposta.get_json()
+
+    assert dados["_links"]["self"] == {
+        "href": "/imoveis/tipo/Apartamento",
+        "method": "GET",
+    }
+    assert dados["_links"]["collection"] == {
+        "href": "/imoveis",
+        "method": "GET",
+    }
+
+    imovel = dados["imoveis"][0]
+
+    assert imovel["_links"]["self"] == {
+        "href": f"/imoveis/{imovel['id']}",
+        "method": "GET",
+    }
