@@ -4,6 +4,12 @@
 
 API RESTful para gerenciamento de imóveis, desenvolvida com Flask e MySQL hospedado no Aiven.
 
+## API pública
+
+A API está hospedada em uma EC2 na AWS e pode ser acessada em:
+
+[http://50.17.8.42/imoveis](http://50.17.8.42/imoveis)
+
 ## Tecnologias
 
 - Python
@@ -11,6 +17,9 @@ API RESTful para gerenciamento de imóveis, desenvolvida com Flask e MySQL hospe
 - MySQL
 - Aiven
 - Pytest
+- Gunicorn
+- Nginx
+- AWS EC2
 
 ## Configuração local
 
