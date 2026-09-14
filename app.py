@@ -262,15 +262,23 @@ def atualiza_imovel(imovel_id):
         return jsonify({
     "imovel": imovel,
     "_links": {
-        "self": {
+    "self": {
             "href": f"/imoveis/{imovel_id}",
             "method": "GET",
-                },
+        },
         "collection": {
             "href": "/imoveis",
             "method": "GET",
-            },
         },
+        "update": {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "PUT",
+        },
+        "delete": {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "DELETE",
+        },
+    },
         }), 200
     finally:
         cursor.close()
