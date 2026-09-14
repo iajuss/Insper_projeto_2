@@ -610,3 +610,27 @@ def test_buscar_imoveis_por_tipo_informa_links(client):
         "href": f"/imoveis/{imovel['id']}",
         "method": "GET",
     }
+
+def test_buscar_imoveis_por_cidade_informa_links(client):
+    resposta_todos = client.get("/imoveis")
+    cidade = resposta_todos.get_json()["imoveis"][0]["cidade"]
+    cidade_na_url = quote(cidade, safe="")
+
+    resposta = client.get(f"/imoveis/cidade/{cidade_na_url}")
+    dados = resposta.get_json()
+
+    assert dados["_links"]["self"] == {
+        "href": f"/imoveis/cidade/{cidade_na_url}",
+        "method": "GET",
+    }
+    assert dados["_links"]["collection"] == {
+        "href": "/imoveis",
+        "method": "GET",
+    }
+
+    imovel = dados["imoveis"][0]
+
+    assert imovel["_links"]["self"] == {
+        "href": f"/imoveis/{imovel['id']}",
+        "method": "GET",
+    }
