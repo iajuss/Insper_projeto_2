@@ -171,14 +171,26 @@ def cria_novo_imovel():
     cursor.close()
     conexao.close()
 
-    resposta = jsonify({
+    resposta = resposta = jsonify({
     "imovel": imovel,
     "_links": {
-        "self": {
-            "href": f"/imoveis/{imovel['id']}",
-            "method": "GET",
+            "self": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "GET",
+            },
+            "update": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "PUT",
+            },
+            "delete": {
+                "href": f"/imoveis/{imovel['id']}",
+                "method": "DELETE",
+            },
+            "collection": {
+                "href": "/imoveis",
+                "method": "GET",
+            },
         },
-    },
     })
 
     resposta.headers["Location"] = f"/imoveis/{imovel['id']}"
