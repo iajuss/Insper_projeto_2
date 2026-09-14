@@ -656,3 +656,36 @@ def test_buscar_imoveis_por_cidade_informa_como_criar_imovel(client):
         "href": "/imoveis",
         "method": "POST",
     }
+
+def test_criar_imovel_informa_acoes_do_novo_recurso(client):
+    novo_imovel = {
+        "logradouro": "Rua das Acoes",
+        "tipo_logradouro": "Rua",
+        "bairro": "Centro",
+        "cidade": "Sao Paulo",
+        "cep": "01000-000",
+        "tipo": "Casa",
+        "valor": 400000.00,
+        "data_aquisicao": "2025-01-01",
+    }
+
+    resposta = client.post("/imoveis", json=novo_imovel)
+    imovel_id = resposta.get_json()["imovel"]["id"]
+
+    try:
+        dados = resposta.get_json()
+
+        assert dados["_links"]["update"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "PUT",
+        }
+        assert dados["_links"]["delete"] == {
+            "href": f"/imoveis/{imovel_id}",
+            "method": "DELETE",
+        }
+        assert dados["_links"]["collection"] == {
+            "href": "/imoveis",
+            "method": "GET",
+        }
+    finally:
+        client.delete(f"/imoveis/{imovel_id}")
