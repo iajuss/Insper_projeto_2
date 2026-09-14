@@ -82,11 +82,16 @@ def listar_imoveis():
             },
         }
 
+    href_self = "/imoveis"
+
+    if request.query_string:
+        href_self += f"?{request.query_string.decode('utf-8')}"
+
     return jsonify({
         "imoveis": imoveis,
         "_links": {
             "self": {
-                "href": "/imoveis",
+                "href": href_self,
                 "method": "GET",
             },
             "create": {
