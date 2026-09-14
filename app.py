@@ -332,6 +332,10 @@ def buscar_imoveis_por_tipo(tipo):
                 "href": "/imoveis",
                 "method": "GET",
             },
+            "create": {
+                "href": "/imoveis",
+                "method": "POST",
+            },
         },
     }), 200
 
